@@ -1,0 +1,30 @@
+<view class="container">
+  <!-- 创建新白板按钮 -->
+  <button bindtap="createNewBoard">创建新白板</button>
+
+  <!-- 白板列表 -->
+  <view wx:for="{{boards}}" wx:key="id" class="board-item" bindtap="openBoard" data-id="{{item.id}}">
+    <text>{{item.title}}</text>
+  </view>
+
+  <!-- 白板编辑区域 -->
+  <view wx:if="{{currentBoard}}" class="editor">
+    <textarea placeholder="请输入文字内容" bindinput="onTextInput" value="{{currentBoard.text}}"></textarea>
+    <button bindtap="chooseImage">选择图片</button>
+    <image wx:if="{{currentBoard.imagePath}}" src="{{currentBoard.imagePath}}" class="preview-image"></image>
+    <button bindtap="saveBoard">保存</button>
+    <button bindtap="shareBoard">分享</button>
+  </view>
+
+  <!-- 分享弹出框 -->
+  <view class="popup-box" wx:if="{{showPopup}}" bindtap="closePopup"></view>
+  <view class="info-bottom" wx:if="{{showPopup}}">
+    <view class="row-info">
+      <text>分享此白板给好友</text>
+    </view>
+    <view class="row-btn">
+      <view class="left-btn" bindtap="closePopup">取消</view>
+      <view class="right-btn" bindtap="confirmShare">确认分享</view>
+    </view>
+  </view>
+</view>

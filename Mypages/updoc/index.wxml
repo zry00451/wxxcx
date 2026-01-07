@@ -1,0 +1,8 @@
+<!--Mypages/updoc/index.wxml-->
+<view class="container">
+  <textarea placeholder="请输入文字内容" bindinput="onTextInput"></textarea>
+  <button bindtap="chooseImage">选择图片</button>
+  <image wx:if="{{imagePath}}" src="{{imagePath}}" class="preview-image"></image>
+  <button bindtap="submitContent">提交内容</button>
+</view>
+

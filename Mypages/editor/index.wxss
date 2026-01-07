@@ -1,0 +1,31 @@
+/* Mypages/editor/index.wxss */
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.canvas-area {
+  position: relative;
+  width: 100%;
+  height: 80%;
+}
+
+.background-image {
+  width: 100%;
+  height: auto;
+}
+
+.movable {
+  position: absolute;
+}
+
+.editable-text {
+  font-size: 16px;
+  color: #000;
+}
+
+.uploaded-image {
+  width: 100px;
+  height: 100px;
+}

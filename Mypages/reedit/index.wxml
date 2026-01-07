@@ -1,0 +1,9 @@
+<!--Mypages/reedit/index.wxml-->
+<view class="container">
+  <textarea class="content-input" value="{{document.content}}" bindinput="onContentInput"></textarea>
+  <button class="btn" bindtap="chooseImage">更新图片</button>
+  <image wx:if="{{document.imageUrl}}" src="{{document.imageUrl}}" class="preview-image" mode="aspectFit"></image>
+  <button class="btn" bindtap="chooseBackground">更新背景图</button>
+  <image wx:if="{{document.backgroundImage}}" src="{{document.backgroundImage}}" class="preview-background" mode="aspectFit"></image>
+  <button class="btn save-btn" bindtap="updateDocument">保存修改</button>
+</view>

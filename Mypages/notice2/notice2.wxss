@@ -1,0 +1,9 @@
+/* Mypages/notice1/notice1.wxss */
+button {
+  background-color: #007AFF;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 20px;
+}

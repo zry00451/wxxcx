@@ -1,0 +1,8 @@
+<!--Mypages/weiixinlogin/index.wxml-->
+<view>
+  <button class="avatar" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar" style="width: 250rpx;height: 200rpx;"><image class="avatar" src="{{avatarUrl}}" ></image></button>
+ 
+<input bindinput="inputValue" placeholder="请输入昵称" style="width: 200rpx;height: 100rpx; margin:20rpx auto;"/>
+ 
+<button bindtap="submit" style="background-color: aquamarine;">授权登录</button>
+</view>

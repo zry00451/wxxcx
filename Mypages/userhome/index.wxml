@@ -1,0 +1,5 @@
+<!--Mypages/userhome/index.wxml-->
+<view style="width: 100%;height: 400rpx;background-color: aquamarine;display: flex;flex-direction: column;justify-content: center;">
+  <image src="{{userInfo.avatarUrl}}" style="width: 250rpx;height: 250rpx;border-radius: 50% 50%;overflow: hidden;margin: auto;"></image>
+  <view style="margin: auto;">{{userInfo.nickName}}</view>
+</view>

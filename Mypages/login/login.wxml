@@ -1,0 +1,16 @@
+<!--Mypages/login/login.wxml-->
+<view class="container">
+  <!-- 用户头像和昵称 -->
+  <view wx:if="{{loggedIn}}" class="user-info">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" />
+    <text class="nickname">你好，{{userInfo.nickName}}</text>
+  </view>
+
+  <!-- 未登录状态时显示按钮 -->
+  <view wx:else>
+    <button class="login-btn" bindtap="getUserProfile">微信一键登录</button>
+  </view>
+
+  <!-- 退出按钮 -->
+  <button wx:if="{{loggedIn}}" class="logout-btn" bindtap="logout">退出登录</button>
+</view>

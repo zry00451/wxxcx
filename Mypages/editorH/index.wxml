@@ -1,0 +1,474 @@
+<view class="screen-container {{isLandscape ? 'landscape-mode' : 'portrait-mode'}}">
+  <view wx:if="{{!isLandscape}}">
+  <view class="bg-container"  bindtouchstart="touchstartBg"
+      bindtouchmove="touchmoveBg"  bindtap="onBgTap"
+        style="width:{{displayW}}px;height:{{displayH}}px;transform:translateX({{offsetX}}px);">
+    <image src="{{imagePath}}" style="width:100%;height:100%;"/>
+ 
+     <!--connections.length > 0&& 连接线 Canvas -->
+     <canvas 
+  wx:if="{{ !showPreview&& !hideCanvas}}"
+  id="connectionCanvas" 
+  type="2d" 
+  class="connection-canvas"
+  style="width: {{displayW}}px; height: {{displayH}}px;"
+  >
+</canvas>
+  <!-- 删除按钮层（使用真实的 DOM 按钮） -->
+  <view wx:if="{{isDeleteConnectionMode && connections.length > 0}}" class="delete-buttons-layer">
+        <view wx:for="{{deleteButtonPositions}}" 
+              wx:key="index"
+              class="delete-button-wrapper {{highlightedConnectionIndex === index ? 'highlighted' : ''}}"
+              style="left: {{item.x}}px; top: {{item.y}}px;"
+              catchtap="onDeleteButtonTap"
+              data-index="{{index}}">
+          <view class="delete-button">
+            <view class="delete-icon">×</view>
+          </view>
+         
+        </view>
+      </view>
+      <!-- 颜色选择按钮层 -->
+<view wx:if="{{isConnectingMode && connections.length > 0}}" class="color-buttons-layer">
+  <view wx:for="{{deleteButtonPositions}}" 
+        wx:for-index="connIdx"
+        wx:for-item="posItem"
+        wx:key="connIdx"
+        class="color-button-wrapper {{selectedColorConnectionIndex === connIdx ? 'active' : ''}}"
+        style="left: {{posItem.x}}px; top: {{posItem.y}}px;"
+        catchtap="onColorButtonTap"
+        data-index="{{connIdx}}">
+    
+    <!-- 颜色按钮 -->
+    <view class="color-button" style="background-color: {{connections[connIdx].color || '#1890ff'}}; border-color: {{connections[connIdx].color || '#1890ff'}};">
+      <view class="color-icon">🎨</view>
+    </view>
+    
+    <!-- 提示文字 -->
+    <view class="color-hint">更改颜色</view>
+    
+    <!-- 颜色选择面板 -->
+    <view wx:if="{{selectedColorConnectionIndex === connIdx}}" class="color-picker-panel" catchtap="stopPropagation">
+      <view class="color-picker-header">
+        <text class="color-picker-title">选择颜色</text>
+        <view class="color-picker-close" catchtap="closeColorPicker">×</view>
+      </view>
+      
+      <view class="color-options">
+        <!-- 关键修复：使用 connIdx 而不是 index -->
+        <view wx:for="{{connectionColors}}" 
+              wx:for-index="colorIdx"
+              wx:for-item="colorItem"
+              wx:key="colorIdx"
+              class="color-option {{connections[connIdx].color === colorItem ? 'selected' : ''}}"
+              style="background-color: {{colorItem}};"
+              catchtap="onSelectColor"
+              data-conn-index="{{connIdx}}"
+              data-color="{{colorItem}}">
+          <view wx:if="{{connections[connIdx].color === colorItem}}" class="color-check">✓</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+    <block wx:for="{{overlays}}" wx:for-index="idx" wx:key="idx">
+      <view class="overlay-wrapper"
+        style="top:{{item.top}}px; left:{{item.left}}px;"
+        data-index="{{idx}}"
+        >
+    <!-- 高亮边框和拖动手柄    -->
+    <view wx:if="{{editingIdx !== idx}}"
+              class="overlay {{selectedOverlayIdx === idx ? 'overlay-selected' : ''}} {{draggingIdx === idx ? 'overlay-dragging' : ''}} {{isConnectingMode ? 'overlay-connectable' : ''}}"
+              catchtouchstart="startDragOverlay"
+              catchtouchmove="moveDragOverlay"
+              catchtouchend="endDragOverlay"
+              data-idx="{{idx}}"
+              style="width:{{item.width}}px; height:{{item.height}}px; z-index: {{draggingIdx === idx ? 1000 : item.zIndex || 1}}">
+          
+         <!-- 文字组件 -->
+<view wx:if="{{item.type==='text'}}"style="text-indent: 0;">
+  <!-- 非编辑状态：显示文本 class="text-display" -->
+  <view wx:if="{{editingIdx !== idx}}">
+    <text selectable="false" 
+          class="text-box"
+          style="font-size: {{item.fontSize || 20}}px; color: {{item.color || '#000000'}}; white-space: pre-wrap; word-break: break-all; text-indent: 0 !important;">
+      {{item.text || ''}}
+    </text>
+  </view>
+
+ 
+</view>
+          
+          <!-- 图片组件 -->
+          <image wx:if="{{item.type==='image'}}" 
+                 src="{{item.src}}" 
+                 mode="aspectFill"
+                 style="width:100%;height:100%;"/>
+        </view>
+        
+        <!-- 编辑状态的文字组件 -->
+         <!-- 编辑状态：显示编辑面板 -->
+  <view wx:if="{{editingIdx === idx && item.type === 'text'}}"class="overlay overlay-editing" >
+          <!-- 文本颜色切换按钮 style="width:{{item.width || 200}}px; height:{{item.height || 100}}px; z-index: 1001" -->
+          <view class="text-color-toggle" bindtap="quickToggleTextColor" data-idx="{{idx}}">
+            <view class="color-preview" style="background-color: {{item.color || '#000000'}};"></view>
+            <text class="color-text">{{(item.color === '#f5f5f5' || item.color === '#ffffff') ? 'A' : 'A'}}</text>
+          </view>
+          
+          <scroll-view class="text-edit-scroll"
+                       scroll-y="{{true}}"
+                       bindscroll="onTextScroll"
+                       style="height: 100%">
+            <view class="text-input-wrapper">
+              <!-- 字数统计 -->
+              <view class="text-counter">{{textInputLength}}/{{maxTextLength}}</view>
+              
+              <!-- 文本输入框width:{{ editorW}}px;height:{{editorH}}px -->
+              <textarea class="text-editor"
+                        value="{{textInput}}"
+                        placeholder="请至少输入一个字符再调整位置"
+                        auto-focus="{{true}}"
+                        maxlength="{{maxTextLength}}"
+                        bindinput="onTextInput"
+                        bindblur="onTextBlur"
+                        style="font-size: {{item.fontSize || 20}}px; color: {{item.color || '#000000'}};"
+                        show-confirm-bar="{{false}}"
+                        adjust-position="{{false}}"/>
+            </view>
+          </scroll-view>
+        </view>
+        <!-- 连线模式下的选中指示器 -->
+    <view wx:if="{{isConnectingMode && firstSelectedForConnect === idx}}"
+    class="connect-indicator connect-indicator-{{firstSelectedPosition}}">
+      <text>起点({{firstSelectedPosition}})</text>
+    </view>
+
+    <!-- 连接点显示（仅在连线模式下显示）wx:if="{{item.type === 'image'}}" -->
+    <view wx:if="{{isConnectingMode}}" class="connect-points">
+      <block >
+      <!-- 上连接点 -->
+      <view class="connect-point connect-point-top" 
+            style="top: -40rpx; left: 50%;"
+            data-overlay-index="{{idx}}"
+            data-position="top"
+            bindtap="onConnectionPointTap"></view>
+      <!-- 下连接点 -->
+      <view class="connect-point connect-point-bottom" 
+            style="bottom: -40rpx; left: 50%;"
+            data-overlay-index="{{idx}}"
+            data-position="bottom"
+            bindtap="onConnectionPointTap"></view>
+      <!-- 左连接点 -->
+      <view class="connect-point connect-point-left" 
+            style="left: -40rpx;top: 50%;"
+            data-overlay-index="{{idx}}"
+            data-position="left"
+            bindtap="onConnectionPointTap"></view>
+      <!-- 右连接点 -->
+      <view class="connect-point connect-point-right" 
+            style=" right: -40rpx; top: 50%;"
+            data-overlay-index="{{idx}}"
+            data-position="right"
+            bindtap="onConnectionPointTap"></view>
+            </block>
+
+  <!-- 如果是文本组件：只显示左上角一个点 
+  <block wx:elif="{{item.type === 'text'}}">
+    <view class="connect-point connect-point-topleft" 
+          style="left: -6px; top: -6px;"
+          data-overlay-index="{{idx}}"
+          data-position="topleft"
+          bindtap="onConnectionPointTap"></view>
+  </block>-->
+    </view>
+    
+   <!-- <view wx:for="{{connectSquares}}" wx:key="index"
+        class="square-dot"
+        style="left: {{item.left}}px; top: {{item.top}}px;">
+    </view>-->
+    <!-- 仅当选中时，显示操作按钮<button class="ctrl-btn resize-btn" bindtap="resizeOverlay" data-idx="{{idx}}">
+            <text class="btn-icon">⊡</text>
+          </button>
+           "class="overlay-controls"-->
+    <view  wx:if="{{selectedOverlayIdx === idx && !isDragging && editingIdx !== idx}}" >
+
+      <view class="deletehandle" bindtap="ondeleteselect" data-idx="{{idx}}">
+            <text class="btn-icon">×</text> </view>
+            <view  class="resize-handle"catchtouchstart="startResizeDrag"catchtouchmove="moveResizeDrag"
+          catchtouchend="endResizeDrag"
+        data-idx="{{idx}}">    <text class="resize-icon">⤡</text>  </view>    
+          <view wx:if="{{item.type === 'image'}}" class="emoji-btn" bindtap="onEmojiComponentTap" data-idx="{{idx}}"><text class="btn-icon">+</text> </view>
+            <!-- 文本颜色快速切换按钮（仅文本组件显示）
+          <button wx:if="{{item.type === 'text'}}" class="ctrl-btn color-quick-btn" bindtap="quickToggleTextColor" data-idx="{{idx}}">
+            <view class="color-icon" style="background-color: {{item.color === '#000000' ? '#f5f5f5' : (item.color === '#f5f5f5' ? 'transparent' : '#000000')}}; border: 1px solid #ccc;"></view>
+          </button>
+           -->
+          <!-- 新增：左上角拖动调整大小按钮 
+           <view wx:if="{{item.type === 'image'}}" class="resize-handle"catchtouchstart="startResizeDrag"catchtouchmove="moveResizeDrag"catchtouchend="endResizeDrag"data-idx="{{idx}}"><text class="resize-icon">⤡</text></view>-->
+        </view>
+      </view>
+  </block>
+<!-- left-swipe-hint.wxml
+<view class="swipe-hint" animation="{{fadeAnimation}}" wx:if="{{showHint}}">
+  <text class="arrow"> 左右滑动查看更多</text>
+</view> -->
+<!-- page.wxml 
+<view class="login-btn" wx:if="{{showLoginBtn}}">
+  <button open-type="getUserProfile"type="primary" size="mini" bindtap="onLogin">登录</button>
+</view>-->
+  </view>
+
+  <view wx:if="{{showmenu}}">
+  <!-- 上拉菜单 -->
+<view class="menu-container ">
+
+<view class="menu-btn {{guideStep === 2 ? 'highlight' : ''}}" bindtap="toggleDropup">编辑</view>
+<view class="menu-btn" wx:if="{{notcancel}}" bindtap="back" >返回</view>
+<view class="menu-btn" wx:if="{{!notcancel}}" bindtap="showloginpanel">登陆</view>
+<view class="menu-btn  {{guideStep === 3 ? 'highlight' : ''}}"  bindtap="toggleOrientation">预览</view>
+<view class="dropup-menu" wx:if="{{showDropup}}">
+  <view class="dropup-item" bindtap="startConnectMode">开始连线</view>
+  <view class="dropup-item" bindtap="startDeleteConnectionMode">删除连线</view>
+  <view class="dropup-item" bindtap="addText">文字</view>
+  <view class="dropup-item" bindtap="addImg">图片</view>
+  <view class="dropup-item" bindtap="openPopup" data-index="0">表情包</view>
+  <view class="dropup-item" bindtap="uploadBackground">背景图</view>
+</view>
+</view>
+
+<!-- 下拉菜单 -->
+<view class="menu-container" style="top:57.35%">
+<view class="menu-btn"  wx:if="{{notcancel}}"  bindtap="toggleDropdown">更多</view>
+<view class="dropdown-menu"wx:if="{{showDropdown}}">
+  <view class="dropup-item" bindtap="onShareSceneFile">导出</view>
+  <view class="dropup-item" bindtap="onLogout">退出</view>
+  <view class="dropup-item" bindtap="confirmsavescenecloud">云存储</view>   
+  <view class="dropup-item" bindtap="goFeedback">反馈</view>   
+  
+</view>
+</view>
+</view>
+</view>
+
+<!-- 横竖屏切换按钮
+ 
+<text class="orientation-text">{{isLandscape ? '竖屏' : '横屏'}}</text> 
+<view class="orientation-toggle" bindtap="toggleOrientation" style="position: fixed; left: 622rpx; top: 1483rpx; width: 102rpx; height: 60rpx; display: flex; box-sizing: border-box">
+  <text class="orientation-icon" style="width: 39rpx; display: block; box-sizing: border-box">{{isLandscape ? '⤿' : '⤾'}}</text>
+  
+</view>-->
+
+<!-- 横屏预览模式 -->
+
+<!-- 预览页面 -->
+<view wx:if="{{showPreview}}" class="preview-page" >
+  
+  <!-- 竖屏预览 -->
+  <view wx:if="{{!isLandscapePreview}}" class="portrait-view" catchtap="">
+    <image src="{{previewImagePath}}" 
+           mode="widthFix" 
+           class="preview-image"/>
+  </view>
+  
+  <!-- 横屏预览 -->
+  <view wx:if="{{isLandscapePreview}}" class="landscape-view" catchtap="">
+   
+    <image src="{{previewImagePath}}"
+         mode="aspectFit"
+         class="landscape-image"/>
+          <!-- 临时添加这些来检查数据 
+          
+      <image src="{{previewImagePath}}" 
+       mode="aspectFit"  style="width: {{previewDisplayW}}px; height: {{previewDisplayH}}px; transform: translateX({{previewOffsetX}}px) translateY({{previewOffsetY}}px) rotate(90deg);"/>-->
+   
+  </view>
+  
+  <!-- 操作按钮 -->
+  <view class="preview-actions">
+    <button class="action-button" bindtap="{{isLandscapePreview ? 'switchToPortrait' : 'switchToLandscape'}}">
+      <text class="button-icon">{{isLandscapePreview ? '↻' : '↻'}}</text>
+    </button>
+    <button class="action-button" bindtap="savePreviewImage">
+      <text class="button-icon">下载</text>
+    </button>
+    <button class="action-button" bindtap="backToEdit">
+      <text class="button-icon">编辑</text>
+    </button>
+  </view>
+  
+</view>
+  
+
+<!-- 用于截图的隐藏Canvas -->
+<canvas id="screenshotCanvas" 
+        type="2d" 
+        class="screenshot-canvas"
+        style="position: absolute; left: -9999px; top: -9999px; width: {{displayW}}px; height: {{displayH}}px;"></canvas>
+
+
+<!-- 连线模式提示 <view class="dropup-item" bindtap="clearAllConnections">清空连线</view>
+    <view class="dropup-item" bindtap="saveToLocal">保存</view>-->
+<!-- 连线模式提示 -->
+<view wx:if="{{isConnectingMode}}" class="connect-mode-hint {{isLandscape ? 'landscape-mode' : ''}}">
+  <text>连线模式：{{firstSelectedForConnect === null ? '请选择第一个组件' : '请选择第二个组件'}}</text>
+  <button class="exit-connect-btn" bindtap="exitConnectMode">退出</button>
+</view>
+<view wx:if="{{isDeleteConnectionMode}}" class="connect-mode-hint {{isLandscape ? 'landscape-mode' : ''}}">
+  <text>请点击连线删除</text>
+  <button class="exit-connect-btn" bindtap="exitDeleteConnectionMode">退出</button>
+</view>
+<view class="mask" wx:if="{{showIndex=='0'}}" bindtap="closePopup"></view> 
+<view class="emoji-popup " wx:if="{{showIndex=='0'}}">
+   <!-- 可选：顶部tab分类 
+   <view class="tabs">
+    <view class="tab" wx:for="{{tabs}}" wx:key="index"
+          bindtap="onTabChange"
+          class="{{activeTab === index ? 'active' : ''}}">
+      {{item.name}}
+    </view>
+  </view>-->
+  <button bindtap="addemoji">自定义</button>
+  <!-- 横滑区域 <view class="delete-btn" 
+        wx:if="{{item.showDelete}}"
+        catchtap="onDeleteEmoji" 
+        data-item="{{item}}" 
+        data-index="{{index}}">×</view>-->
+  <scroll-view scroll-y class="emoji-scroll"> 
+    <view class="emoji-container">
+      <view class="emoji-item {{item.selected ? 'selected' : ''}}" 
+      wx:for="{{emojiList}}" wx:key="index"
+      bindtap="onEmojiSelect" 
+      bindlongpress="onEmojiLongPress"
+      data-item="{{item}}" 
+      data-index="{{index}}">
+      
+      <image src="{{item.src}}" mode="aspectFit"></image>
+    </view>
+</view>
+  </scroll-view>
+</view>
+<!-- 背景选择器弹窗 bindtap="closeBackgroundSelector"-->
+<view wx:if="{{showBackgroundSelector}}" class="background-selector-mask" >
+  <view class="background-selector-popup" catchtap="">
+  
+    <!-- 竖排背景列表 -->
+    <scroll-view class="background-list" scroll-y>
+      
+      <!-- 预设背景列表 -->
+      <view wx:for="{{bgList}}" 
+            wx:key="index" 
+            class="background-item-vertical {{selectedBackgroundId === item.index ? 'selected' : ''}}"
+            bindtap="selectPresetBackground"
+            bindlongpress="onBgLongPress"
+            data-item="{{item}}" 
+            data-index="{{index}}">
+        
+        <!-- 图片背景 -->
+        <image  
+               src="{{item.src}}" 
+               class="background-image" 
+               mode="widthFix"/>
+        
+        <!-- 背景信息 -->
+        <view class="background-info">
+          <!--<text class="background-name">{{item.name}}</text>-->
+          <!-- 选中标识 -->
+          <view wx:if="{{selectedBackgroundId === item.index}}" class="selected-mark">
+            <text class="selected-icon">✓</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    
+    <!-- 操作按钮 -->
+    <view class="selector-actions">
+      <button class="selector-btn cancel-btn" bindtap="uploadCustomBackground">自定义上传</button>
+      <button class="selector-btn confirm-btn" bindtap="closeBackgroundSelector">取消</button>
+    </view>
+  </view>
+</view>
+<view wx:if="{{showbuttonnotice}}"class="float-btn">
+  <button catchtap="noeg" class="float-btn-inner" style="position: relative; left: -72rpx; top: 356rpx; width: 199rpx; height: 45rpx; display: block; box-sizing: border-box">不再显示动画</button>
+</view>
+<view wx:if="{{isLoading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+<view wx:if="{{showmaskstart}}" class="maskeg" bindtap="toggleGuidePause">
+  <!--view wx:if="{{showbuttonnotice}}" class="swipe-hint right step-3 ">
+  <button catchtap="noeg">不再显示</button></view-->
+
+  <view wx:if="{{showMask1}}" class="swipe-hint ">
+<text class="arrow">记录内心世界</text>
+</view>
+
+<view wx:if="{{showMask2}}" class="swipe-hint ">
+<text class="arrow">
+  编辑内可以添加文字图片内容，
+  还可以进行连线
+</text>
+</view>
+
+<view wx:if="{{showMask3}}" class="swipe-hint ">
+<text class="arrow">预览功能可以看到全貌</text>
+</view>
+
+</view>
+<!-- 登录遮罩 class="login-mask"-->
+<view wx:if="{{showloginpanel}}"class="login-mask" >
+
+<view class="login-modal"  style="width: 622rpx; height: 362rpx; display: block; box-sizing: border-box; position: relative; left: 65rpx; top: 572rpx">
+
+<text class="login-title">登录 / 注册</text>
+
+<!-- 协议勾选 -->
+<view class="agreement-row">
+  <checkbox-group bindchange="onAgreeChange">
+    <checkbox value="agree" checked="{{agreed}}" />
+  </checkbox-group>
+
+  <text class="agreement-text" style="width: 181rpx; display: block; box-sizing: border-box">
+    我已阅读并同意 <text class="link" bindtap="showPrivacy">《用户协议》</text>和 <text class="link" bindtap="showTerms">《隐私协议》</text>
+  </text>
+</view>
+
+<!-- 微信快捷登录 -->
+<button
+  class="wx-login-btn"
+  open-type="getUserProfile"
+  bindtap="onLogin"
+  disabled="{{!agreed}}"
+ style="position: relative; left: 131rpx; top: -2rpx; width: 356rpx; height: 77rpx; display: block; box-sizing: border-box">
+  微信快捷登录
+</button>
+<button
+  class="wx-login-btn"
+  
+  bindtap="onLogincancel"
+
+ style="position: relative; left: -185rpx; top: -77rpx; width: 195rpx; height: 77rpx; display: block; box-sizing: border-box">
+  取消
+</button>
+</view>
+</view>
+
+<!-- 设置用户名弹窗 
+<view wx:if="{{showSetName}}" class="login-mask">
+<view class="login-modal">
+
+<text class="login-title">设置用户名</text>
+
+<input
+  class="name-input"
+  placeholder="请输入用户名"
+  value="{{username}}"
+  bindinput="onNameInput"
+/>
+
+<button class="confirm-btn" bindtap="confirmUsername">
+  确定
+</button>
+
+</view>
+</view>-->
+</view>
+

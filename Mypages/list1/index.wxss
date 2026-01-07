@@ -1,0 +1,288 @@
+.container {
+  margin-top: 80rpx;
+  
+  padding: 15rpx;
+}
+.composition-list {
+  top:400rpx;
+  margin-top: 50rpx;
+  min-height: 100vh;
+}
+.composition-item {
+  position: relative;
+  padding: 0rpx;
+ 
+  border-bottom: 1px solid #eee;
+  width: 100%;
+  height: 230rpx; /* 固定高度，避免因内容变化撑开 */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+
+ 
+}
+.toggle-btn {
+  text-align: center;
+  padding: 20rpx;
+  color: #007aff;
+  font-size: 28rpx;
+}
+.bg-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1; /* 确保在最底层 */
+  border-radius: 8rpx;
+}
+.composition-item.selected {
+  border-color: #007aff;
+  background-color: rgba(0, 134, 252, 0.548); /* 选中状态半透明覆盖 */
+  
+}
+
+.editable-fields {
+  width: 350rpx; /*或者 width: 50%; */
+  z-index: 3; /* 确保在背景图之上 */
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  padding: 10rpx;
+  
+}
+/* 标题输入框大 */
+.title-input {
+  border: 1px solid rgba(255, 255, 255, 0);
+  background-color: rgba(226, 222, 222, 0.233); /* 半透明白色背景 */
+  top:10%;
+  width: 100%;
+  position: absolute;
+  height: 60rpx;    /* 高度大 */
+  font-size: 32rpx; /* 字体大 */
+  padding: 10rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center; /* 这个在小程序中可能不完全有效，但有助于某些情况 */
+  transition: none; /* 移除可能的过渡效果 */
+}
+/* 创作者输入框小 */
+.creator-input {
+  border: 1px solid rgba(255, 255, 255, 0);
+  background-color: rgba(231, 231, 231, 0.274); /* 半透明白色背景 */
+  top:65%;
+  width: 100%;
+  position: absolute;
+  height: 60rpx;    /* 高度大 */
+  font-size: 32rpx; /* 字体大 */
+  padding: 10rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center; /* 这个在小程序中可能不完全有效，但有助于某些情况 */
+  transition: none; /* 移除可能的过渡效果 */
+}
+.text-input {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 8rpx;
+  border-radius: 8rpx;
+  background-color: rgba(255, 255, 255, 0.274); /* 半透明白色背景 */
+  color: #333;
+  font-size: 30rpx;
+   /* 关键修复 - 文字垂直居中 */
+   height: 74rpx; /* 明确设置高度 */
+   line-height: 44rpx; /* 行高 = 总高度 - 上下padding (74-30=44) */
+   box-sizing: border-box;
+   vertical-align: middle; /* 垂直对齐 */
+   
+   /* 确保文字在输入框中居中显示 */
+   display: flex;
+   align-items: center; /* 这个在小程序中可能不完全有效，但有助于某些情况 */
+   
+   /* 防止文字跳动 */
+   transition: none; /* 移除可能的过渡效果 */
+
+}
+.text-input::placeholder {
+  color: #999;
+}
+.buttons {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  padding: 20rpx;
+}
+
+.buttons button {
+  background-color: rgba(255, 255, 255, 0.616);
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  transition: all 0.3s ease;
+}
+
+.buttons button:active {
+  background-color: rgba(0, 122, 255, 1);
+  transform: scale(0.95);
+}
+.danger {
+  background-color: #ff4d4f;
+  color: white;
+}
+.create-button {
+  position: fixed;
+  
+  background-color: #007aff;
+  color: white;
+  border-radius: 40rpx;
+  padding: 20rpx 40rpx;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.2);
+}
+.breathing-hint {
+  position: fixed;
+  bottom: 80rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.966);
+  letter-spacing: 2rpx;
+
+  pointer-events: none;
+}
+/* 底部按钮 */
+.bottom-btn {
+  position: fixed;
+  bottom: 60rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: #ee76bcc0;
+  color: #fff;
+  text-align: center;
+  line-height: 140rpx;
+  font-size: 32rpx;
+  z-index: 10;
+}
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* 固定在右侧居中 
+.center-btn {
+  width: 230rpx;  
+  position: fixed;      
+  top: 50%;         
+  right: 5rpx;         
+  transform: translateY(-50%); 
+  display: flex;
+  justify-content: center;  
+  z-index: 98;            
+}
+.fade-img {
+  width: 200rpx;
+  height: 200rpx;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
+}*/
+.main-btn {
+  width: 100rpx;    
+  display: flex;
+  align-items: center;   /* 图标和文字垂直居中 */
+  padding: 10rpx 20rpx;
+  font-size: 32rpx;
+  border-radius: 6rpx;
+  
+  background-color: #e1e2e45d; /* 可自定义 */
+  color: rgba(0, 0, 0, 0.87);
+}
+/* 遮罩层 */
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+/* 面板 */
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 2, 2, 0.329);
+  
+  z-index: 30;
+  text-align: center;
+}
+.fade-in {
+  animation: fadeIn 0.5s forwards; /* 0.5秒渐显，保持最终状态 */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* 动画 */
+.anim-img {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto 30rpx;
+}
+
+/* 右侧窗口 */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;             /* 右侧拉出 */
+  width: 100rpx;        /* 窗口宽度，可调 */
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0);
+  z-index: 100;
+  box-shadow: -2rpx 0 10rpx rgba(0, 0, 0, 0);
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* 按钮垂直居中 */
+  align-items: flex-start;  /* 按钮靠左显示 */
+  gap: 20rpx;
+}
+
+/* 按钮容器，可选 */
+.drawer-btns {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+  width: 100%;
+  top :1100rpx;
+}
+
+/* 按钮 */
+.drawer-btn {
+  width: 90%;           /* 按钮宽度小于窗口宽度 */
+  text-align: left;     /* 文本靠左 */
+  padding: 12rpx 10rpx;
+  font-size: 32rpx;
+  border-radius: 6rpx;
+  background-color: #f0f0f000;
+}

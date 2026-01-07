@@ -1,0 +1,11 @@
+<!--Mypages/list/index.wxml-->
+<view class="container">
+  <button bindtap="createLog">新建日志</button>
+  <block wx:for="{{logs}}" wx:key="id">
+    <view class="log-item" bindtap="openLog" data-id="{{item._id}}">
+      <text>{{item.title}}</text>
+      <button bindtap="editLog" data-id="{{item._id}}">编辑</button>
+      <button bindtap="deleteLog" data-id="{{item._id}}">删除</button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,61 @@
+<view class="image-crop">
+  <view class="add-item" wx:if="{{!imagePath}}" style="position: relative; left: 0rpx; top: 329rpx">
+    <add-image class="add-image" bindtap="onChangeImage" style="width: 650rpx; height: 620rpx; display: flex; box-sizing: border-box; left: 0rpx; top: -20rpx; position: relative"></add-image>
+  </view>
+  
+  <view wx:if="{{imagePath}}" class="crop-container">
+   <!-- 添加居中容器 -->
+   
+      <view class="crop-content" style="width: {{panelWidth + 'px'}}; height: {{panelHeight + 'px'}}; top:{{paneltop+'px'}};position: relative;">
+    
+      <!-- 底图 -->
+      <image src="{{imagePath}}" class="pos-absolute" style="width: {{panelWidth + 'px'}}; height: {{panelHeight + 'px'}}; left: 0; top:0;"/>
+      
+      <!-- 遮罩层 -->
+      <view class="mask-bg" style="width: {{panelWidth + 'px'}}; height: {{panelHeight + 'px'}}; left: 0; top: 0;"></view>
+      
+      <!-- 矩形裁剪框 -->
+      <view wx:if="{{cropMode === 'rect'}}" class="pos-absolute clip-path" style="width: {{clipWidth + 'px'}}; height: {{clipHeight + 'px'}}; left: {{clipX + 'px'}}; top: {{clipY + 'px'}};">
+        <image src="{{imagePath}}" class="pos-absolute" style="width: {{panelWidth + 'px'}}; height: {{panelHeight + 'px'}}; left: {{clipImgX + 'px'}}; top: {{clipImgY + 'px'}};"/>
+      </view>
+      
+      <!-- 圆形裁剪框 -->
+      <view wx:if="{{cropMode === 'circle'}}" class="pos-absolute clip-path-circle" style="width: {{clipWidth + 'px'}}; height: {{clipHeight + 'px'}}; left: {{clipX + 'px'}}; top: {{clipY + 'px'}};">
+        <image src="{{imagePath}}" class="pos-absolute" style="width: {{panelWidth + 'px'}}; height: {{panelHeight + 'px'}}; left: {{clipImgX + 'px'}}; top: {{clipImgY + 'px'}};"/>
+      </view>
+      
+      <!-- 矩形裁剪操作区域 -->
+      <view wx:if="{{cropMode === 'rect'}}" bind:touchmove="touchmoveM" bind:touchstart="touchstartM" class="pos-absolute" style="width: {{clipWidth + 'px'}}; height: {{clipHeight + 'px'}}; left: {{clipX + 'px'}}; top: {{clipY + 'px'}};">
+        <view capture-catch:touchmove="touchmove" capture-catch:touchstart="touchstart" data-id="leftTop" class="corner-area left-top"></view>
+        <view capture-catch:touchmove="touchmove" capture-catch:touchstart="touchstart" data-id="rightTop" class="corner-area right-top"></view>
+        <view capture-catch:touchmove="touchmove" capture-catch:touchstart="touchstart" data-id="rightBottom" class="corner-area right-bottom"></view>
+        <view capture-catch:touchmove="touchmove" capture-catch:touchstart="touchstart" data-id="leftBottom" class="corner-area left-bottom"></view>
+      </view>
+      
+      <!-- 圆形裁剪操作区域 -->
+      <view wx:if="{{cropMode === 'circle'}}" bind:touchmove="touchmoveM" bind:touchstart="touchstartM" class="pos-absolute circle-clip-border" style="width: {{clipWidth + 'px'}}; height: {{clipHeight + 'px'}}; left: {{clipX + 'px'}}; top: {{clipY + 'px'}};">
+        <!-- 圆形缩放点（右下角） -->
+        <view capture-catch:touchmove="touchmove" capture-catch:touchstart="touchstart" data-id="rightBottom" class="circle-corner-area"></view>
+      </view>
+    </view>
+   
+  
+  
+ 
+</view>
+<view class="btn-operate" style="opacity: {{imagePath ? 1 : 0.3}}; height: 49rpx; display: flex; box-sizing: border-box; position: relative; top:100rpx;left: 0rpx; ">
+  <!-- 固定在底部的按钮 -->
+  <view class="btn-operate-fixed">
+    <view class="btn btn-default" bindtap="getCropperImage" style="opacity: {{imagePath ? 1 : 0.3}};">使用图片</view>
+    <view class="btn btn-default" bindtap="switchCropMode" style="opacity: {{imagePath ? 1 : 0.3}};">
+      {{cropMode === 'rect' ? '圆形' : '矩形'}}
+    </view>
+  </view>
+</view>
+  <canvas id="main" canvasId="main" class="main-canvas" style="width: {{croppingImageWidth + 'px'}}; height: {{croppingImageHeight + 'px'}}"></canvas>
+</view>
+
+
+
+
+

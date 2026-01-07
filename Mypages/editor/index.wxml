@@ -1,0 +1,22 @@
+<!--Mypages/editor/index.wxml-->
+<view class="container">
+  <movable-area class="canvas-area">
+    <!-- Background Image -->
+    <image class="background-image" src="{{backgroundImage}}" mode="widthFix"></image>
+
+    <!-- Movable Text -->
+    <movable-view class="movable" direction="all" x="{{textX}}" y="{{textY}}" bindchange="onTextChange">
+      <text class="editable-text">{{textContent}}</text>
+    </movable-view>
+
+    <!-- Movable Uploaded Image -->
+    <movable-view class="movable" direction="all" x="{{imageX}}" y="{{imageY}}" bindchange="onImageChange">
+      <image class="uploaded-image" src="{{uploadedImage}}" mode="aspectFit"></image>
+    </movable-view>
+  </movable-area>
+
+  <!-- Controls -->
+  <button bindtap="chooseBackground">Upload Background</button>
+  <button bindtap="chooseImage">Upload Image</button>
+  <textarea placeholder="Enter text" bindinput="onTextInput"></textarea>
+</view>

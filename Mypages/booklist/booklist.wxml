@@ -1,0 +1,59 @@
+<!--Mypages/booklist/booklist.wxml-->
+<view class="custom-navbar">
+  
+</view>
+
+
+<view class="bg-container" style="background-image: url({{bgUrl}});">
+
+  <button type="primary" bindtap="openPopup" data-index="0">打开底部弹窗</button>
+  <button type="primary" bindtap="openPopup" data-index="1">打开底部弹窗</button>
+  <button type="primary" bindtap="openLogin">登录</button>
+  <button type="primary" bindtap="openhome">用户主页</button>
+  <button type="primary" bindtap="openlist">列表</button>
+  <button type="primary" bindtap="openlist1" style="position: relative; left: 0rpx; top: 25rpx">列表1</button>
+</view>
+
+<view class="popup-box" wx:if="{{showIndex=='0'}}" bindtap="closePopup"></view> 
+<view class="info-bottom" wx:if="{{showIndex=='0'}}">
+  <view class="row-info">
+    <view>
+      <text class="line left-line"></text>
+      <text>用户需知</text>
+      <text class="line right-line"></text>
+    </view>
+    
+    
+    <text>请仔细阅读并同意我们的《用户服务协议》和《隐私政策》。</text>
+    <text class="link" bindtap="openNotice1">《用户须知书》</text>
+    <text class="link" bindtap="openNotice2">《隐私政策》</text>
+    
+  </view>
+  <view class="row-btn">
+    <view class="left-btn" bindtap="closePopup">取消</view>
+    <view class="right-btn">确认</view>
+  </view>
+</view>
+<view class="popup-box" wx:if="{{showIndex=='1'}}" bindtap="closePopup"></view> 
+<view class="info-bottom" wx:if="{{showIndex=='1'}}">
+  <view class="row-info">
+    <view>
+      <text class="line left-line"></text>
+      <text>微信用户登录</text>
+      <text class="line right-line"></text>
+    </view>
+    
+    
+    
+    <view>万里悲秋常作客，百年多病独登台。</view>
+    <view>艰难苦恨繁霜鬓，潦倒新停浊酒杯。</view>
+  </view>
+  <view class="row-btn">
+    <button class="left-btn" bindtap="closePopup">取消</button>
+    
+    <button class="right-btn" open-type="getUserInfo" bindgetuserinfo="getUserInfo">登录</button>
+
+    
+  </view>
+</view>
+<view class="custom-tabbar"></view>

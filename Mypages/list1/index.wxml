@@ -1,0 +1,212 @@
+<view class="container" >
+  
+  <block wx:for="{{compositions}}" wx:key="id" wx:for-item="item" wx:for-index="index">
+  <block wx:if="{{!showAll &&  index < 3}}">
+  
+    
+  <!-- #elif  <block  wx:if="{{compositions.length > 0}}" wx:for="{{compositions}}" wx:key="id" wx:for-item="item">   -->
+
+  <view 
+    class="composition-item {{selectedId === item.id ? 'selected' : ''}}"
+    
+    bindtap="enterEditor"
+    bindlongpress="onListLongPress"
+    data-id="{{item.id}}"
+    >
+    <!-- 背景图片 -->
+    <image 
+      class="bg-image" 
+      src="{{item.bgPath}}" 
+      mode="aspectFill"
+      bindload="onImageLoad"
+      binderror="onImageError"
+      data-id="{{item.id}}"
+      style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;"/>
+    
+    <!-- 可编辑字段容器 -->
+    <view 
+      class="editable-fields" 
+      catchtap="stopPropagation" 
+      style="width: 354rpx; height: 68rpx; display: flex; flex-direction: column; position: relative; z-index: 2; padding: 20rpx; box-sizing: border-box; left: 8rpx; top: -33rpx">
+      
+      <input 
+        
+        class="title-input"
+        value="{{item.title}}"
+        bindinput="updateTitle"
+        data-id="{{item.id}}"
+        placeholder="标题"/>
+          <!-- <input 
+        
+        class="creator-input"
+        value="{{item.creator}}"
+        bindinput="updateCreator"
+        data-id="{{item.id}}"
+        placeholder="创作者"/>-->
+    </view>
+    
+    <!-- 操作按钮 
+    <view 
+      wx:if="{{selectedId === item.id}}" 
+      class="buttons"
+      style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 10rpx;">
+      
+      <button 
+        bindtap="enterEditor" 
+        data-id="{{item.id}}" 
+        style="width: 191rpx; height: 77rpx; display: block; box-sizing: border-box;">
+        进入
+      </button>
+      
+      <button 
+        bindtap="deleteItem" 
+        data-id="{{item.id}}"  
+        style="width: 191rpx; height: 77rpx; display: block; box-sizing: border-box;">
+        删除
+      </button>
+    </view>-->
+  </view>
+</block>
+<block wx:if="{{showAll}}">
+    <!-- 展示全部 -->
+    <view 
+    class="composition-item {{selectedId === item.id ? 'selected' : ''}}"
+    
+    bindtap="enterEditor"
+    bindlongpress="onListLongPress"
+    data-id="{{item.id}}"
+    >
+    <!-- 背景图片 -->
+    <image 
+      class="bg-image" 
+      src="{{item.bgPath}}" 
+      mode="aspectFill"
+      bindload="onImageLoad"
+      binderror="onImageError"
+      data-id="{{item.id}}"
+      style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;"/>
+    
+    <!-- 可编辑字段容器 -->
+    <view 
+      class="editable-fields" 
+      catchtap="stopPropagation" 
+      style="width: 350rpx; height: 164rpx; display: flex; flex-direction: column; position: relative; z-index: 2; padding: 20rpx; box-sizing: border-box;">
+      
+      <input 
+        
+        class="title-input"
+        value="{{item.title}}"
+        bindinput="updateTitle"
+        data-id="{{item.id}}"
+        placeholder="标题"/>
+        <!--<input 
+        
+        class="creator-input"
+        value="{{item.creator}}"
+        bindinput="updateCreator"
+        data-id="{{item.id}}"
+        placeholder="创作者"/>-->
+    </view>
+    
+    <!-- 操作按钮 
+    <view 
+      wx:if="{{selectedId === item.id}}" 
+      class="buttons"
+      style="position: relative; z-index: 3; display: flex; flex-direction: column; gap: 10rpx;">
+      
+      <button 
+        bindtap="enterEditor" 
+        data-id="{{item.id}}" 
+        style="width: 191rpx; height: 77rpx; display: block; box-sizing: border-box;">
+        进入
+      </button>
+      
+      <button 
+        bindtap="deleteItem" 
+        data-id="{{item.id}}"  
+        style="width: 191rpx; height: 77rpx; display: block; box-sizing: border-box;">
+        删除
+      </button>
+    </view>-->
+  </view>
+  </block>
+</block>
+
+<view class="page">
+<!-- 底部主按钮  -->
+<view wx:if="{{showHint}}"
+  class="breathing-hint"
+  animation="{{fadeAnimation}}"
+ >
+  点击即可创建新内容
+</view>
+<view  wx:if="{{showMainBtn}}" 
+class="bottom-btn" 
+bindtap="onPlay" 
+style="position: fixed; left: 375rpx; top: 1456rpx; height: 214rpx; display: block; box-sizing: border-box; width: 300rpx">
+</view>
+
+<view 
+  wx:if="{{showDrawer}}" 
+  class="mask" 
+  bindtap="closeDrawer">
+  
+
+
+
+<!-- 动画 + 功能按钮wx:if="{{showAnim}}" -->
+<view  class="panel">
+
+<!-- 动画 -->
+<image
+  wx:if="{{showAnim}}"
+  src="{{frames[currentFrame]}}"
+  class=".anim-img.fade-in"
+ 
+  mode="scaleToFill"
+/>
+<!-- 不播放动画，状态 1 -->
+<image
+    wx:elif="{{buttonState === 1}}"
+    src="{{currentImg}}"
+    class="anim-img"
+    mode="scaleToFill"
+  />
+
+  <!-- 不播放动画，状态 2 -->
+  <image
+    wx:elif="{{buttonState === 2}}"
+    src="{{currentImg}}"
+    class="anim-img"
+    mode="scaleToFill"
+  />
+  <view wx:if="{{!showAnim}}"class="drawer-btns" style="position: absolute; left: 0rpx; top: 1056rpx; width: 750rpx; height: 568rpx; display: flex; box-sizing: border-box"> 
+  <button bindtap="creatone"class="drawer-btn" style="position: relative; left: 0rpx; top: -39rpx; width: 450rpx; height: 383rpx; display: block; box-sizing: border-box"></button>
+  <button bindtap="onImportTap"class="drawer-btn" style="width: 379rpx; height: 149rpx; display: block; box-sizing: border-box; left: 0rpx; top: -52rpx; position: relative"></button>
+  <button bindtap="onnullPress"class="drawer-btn" style="position: relative; left: 0rpx; top: -66rpx; width: 318rpx; height: 143rpx; display: block; box-sizing: border-box"></button>
+  <button bindtap="toggleShowAll"class="drawer-btn" style="position: relative; left: 0rpx; top: -79rpx; width: 318rpx; height: 158rpx; display: block; box-sizing: border-box"></button>
+</view>
+</view>
+</view>
+</view>
+</view>
+
+<!--{{ showAll ? '最新' : '全部' }} 按钮触发右侧窗口 
+
+<view class="center-btn">
+  <image style="height: 212rpx; display: block; box-sizing: border-box; width: 202rpx; position: relative; left: 60rpx; top: 697rpx" 
+    src="{{currentImg}}" 
+    class="fade-img {{fadeClass}}"
+    bindtap="openDrawer" />
+    
+  </view>-->
+
+<!-- 遮罩层 <button bindtap="openDrawer" class="main-btn" >打开右侧窗口</button>-->
+<!-- 右侧弹出窗口
+<view 
+  wx:if="{{showDrawer}}" 
+  class="drawer" 
+  catchtap>  
+ 
+  
+</view>-->

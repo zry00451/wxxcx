@@ -1,0 +1,32 @@
+/* Mypages/edit/index.wxss */
+.container {
+  padding: 20rpx;
+}
+
+.content-input {
+  width: 100%;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+  padding: 10rpx;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn {
+  margin-bottom: 20rpx;
+  padding: 10rpx 20rpx;
+  background-color: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+
+.preview-image {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.preview-background {
+  width: 100%;
+  margin-bottom: 20rpx;
+}

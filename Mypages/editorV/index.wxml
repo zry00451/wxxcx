@@ -1,0 +1,24 @@
+<!--Mypages/editorV/index.wxml-->
+<view class="container">
+  <scroll-view class="scroll-container" scroll-y="true" >
+    
+    <view class="content-area" style="background-image: url('{{backgroundImage}}');">
+      <block wx:for="{{content}}" wx:key="index">
+        <view class="draggable-item"
+              data-index="{{index}}"
+              bindtouchstart="onTouchStart"
+              bindtouchmove="onTouchMove"
+              bindtouchend="onTouchEnd"
+              style="top: {{item.top}}px; left: {{item.left}}px;">
+          <text wx:if="{{item.type === 'text'}}">{{item.text}}</text>
+          <image wx:if="{{item.type === 'image'}}" src="{{item.src}}" class="content-image"></image>
+        </view>
+      </block>
+    </view>
+  <button bindtap="addText">添加文字</button>
+  <button bindtap="addImage">添加图片</button>
+  <button bindtap="chooseBackground">添加背景图</button>
+
+  </scroll-view>
+  
+</view>

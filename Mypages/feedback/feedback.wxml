@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="title" style="position: relative; left: 0rpx; top: 99rpx">意见反馈</view>
+
+  <textarea style="position: relative; left: 0rpx; top: 106rpx"
+    class="textarea"
+    placeholder="请描述您的问题或建议（必填）"
+    maxlength="500"
+    bindinput="onInput"
+  />
+
+  <view class="upload">
+    <button bindtap="chooseImage" style="position: relative; left: 0rpx; top: 199rpx">上传截图（可选）</button>
+    <view class="img-list" style="height: 75rpx; display: flex; box-sizing: border-box; position: relative; left: 0rpx; top: 214rpx">
+      <image
+        wx:for="{{images}}"
+        wx:key="index"
+        src="{{item}}"
+        class="img"
+      />
+    </view>
+  </view>
+
+  <input style="height: 89rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -118rpx; width: 624rpx"
+    class="input"
+    placeholder="联系方式（必填）"
+    bindinput="onContactInput"
+  />
+
+  <button
+    class="submit"
+    bindtap="submit"
+   style="position: relative; left: 0rpx; top: 502rpx">
+    提交反馈
+  </button>
+</view>

@@ -1,0 +1,15 @@
+<!--Mypages/edit/index.wxml-->
+<view class="container">
+  <!-- 编辑区域：文本框和图片预览 -->
+  <textarea class="content-input" placeholder="请输入文档文字" value="{{content}}" bindinput="onContentInput"></textarea>
+  
+  <button class="btn" bindtap="chooseImage">上传图片</button>
+  <image wx:if="{{imageUrl}}" src="{{imageUrl}}" class="preview-image" mode="aspectFit"></image>
+  
+  <!-- 选择背景图（选填） -->
+  <button class="btn" bindtap="chooseBackground">上传背景图</button>
+  <image wx:if="{{backgroundImage}}" src="{{backgroundImage}}" class="preview-background" mode="aspectFit"></image>
+  
+  <!-- 保存文档 -->
+  <button class="btn save-btn" bindtap="saveDocument">保存文档</button>
+</view>
